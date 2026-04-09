@@ -8,10 +8,11 @@ import com.Zorvyn.FinanceApp.dto.response.MonthlyTrendResponse;
 import com.Zorvyn.FinanceApp.dto.response.RecordResponse;
 
 public interface DashboardService {
-
     DashboardSummaryResponse getSummary();
-    List<CategoryTotalResponse> getCategoryTotals();
-    List<RecordResponse> getRecentActivity(Integer limit);
-    List<MonthlyTrendResponse> getMonthlyTrends(Integer year);
 
+    List<CategoryTotalResponse> getCategoryTotals();
+
+    List<RecordResponse> getRecentActivity(Integer limit);
+
+    List<MonthlyTrendResponse> getMonthlyTrends(Integer year);
 }

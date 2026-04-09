@@ -170,8 +170,7 @@ public class FinanceRecordServiceImpl implements FinanceRecordService {
                     recordPage.getSize(),
                     recordPage.getTotalElements(),
                     recordPage.getTotalPages(),
-                    recordPage.isLast()
-            );
+                    recordPage.isLast());
 
         } catch (BadRequestException e) {
             throw e;

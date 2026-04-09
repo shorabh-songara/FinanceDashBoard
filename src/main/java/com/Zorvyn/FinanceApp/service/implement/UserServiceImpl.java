@@ -3,6 +3,8 @@ package com.Zorvyn.FinanceApp.service.implement;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,9 +61,15 @@ public class UserServiceImpl implements UserService {
                 throw new BadRequestException("Status cannot be blank");
             }
 
+            // Check if a user with this email already exists
+            String email = request.getEmail().trim().toLowerCase();
+            userRepository.findByEmail(email).ifPresent(existingUser -> {
+                throw new BadRequestException("User with email '" + email + "' already exists");
+            });
+
             User user = new User();
             user.setName(request.getName().trim());
-            user.setEmail(request.getEmail().trim().toLowerCase());
+            user.setEmail(email);
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setRole(request.getRole());
             user.setStatus(request.getStatus());
@@ -251,6 +259,12 @@ public class UserServiceImpl implements UserService {
                         logger.warn("User not found with id: {}", id);
                         return new ResourceNotFoundException("User not found with id: " + id);
                     });
+
+            // Prevent admin from deleting themselves
+            String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+            if (user.getEmail().equalsIgnoreCase(currentEmail)) {
+                throw new BadRequestException("Admin cannot delete their own account");
+            }
 
             userRepository.delete(user);
 

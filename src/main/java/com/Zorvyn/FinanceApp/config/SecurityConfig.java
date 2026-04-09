@@ -16,7 +16,7 @@ import com.Zorvyn.FinanceApp.filter.JwtFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity   // enables @PreAuthorize on controllers
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -30,11 +30,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // ── Public endpoints ──
                 .requestMatchers("/api/auth/**").permitAll()
-
-                // ── Everything else requires authentication ──
-                // Role-based access is enforced via @PreAuthorize on controllers
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

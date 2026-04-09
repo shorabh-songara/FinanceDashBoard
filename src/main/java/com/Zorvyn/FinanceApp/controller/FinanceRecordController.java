@@ -74,7 +74,7 @@ public class FinanceRecordController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'ANALYST')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<RecordResponse> updateRecord(
             @PathVariable Long id,
             @RequestBody RecordRequest request) {
@@ -86,7 +86,7 @@ public class FinanceRecordController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'ANALYST')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<ApiResponse> deleteRecord(
             @PathVariable Long id) {
 
@@ -97,7 +97,7 @@ public class FinanceRecordController {
     }
 
     @PatchMapping("/{id}/restore")
-    @PreAuthorize("hasAnyRole('ADMIN', 'ANALYST')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<ApiResponse> restoreRecord(
             @PathVariable Long id) {
 
