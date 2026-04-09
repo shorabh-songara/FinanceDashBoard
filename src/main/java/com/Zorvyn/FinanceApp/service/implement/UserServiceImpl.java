@@ -48,6 +48,9 @@ public class UserServiceImpl implements UserService {
             if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
                 throw new BadRequestException("Email cannot be blank");
             }
+            if (!request.getEmail().trim().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+                throw new BadRequestException("Invalid email format");
+            }
             if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
                 throw new BadRequestException("Password cannot be blank");
             }
