@@ -37,7 +37,7 @@ public class FinanceRecordController {
     private FinanceRecordService financeRecordService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RecordResponse> createRecord(@RequestBody RecordRequest request, Principal principal) {
         // get logged-in user email from JWT
         String email = principal.getName();
@@ -74,7 +74,7 @@ public class FinanceRecordController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RecordResponse> updateRecord(
             @PathVariable Long id,
             @RequestBody RecordRequest request) {
@@ -86,7 +86,7 @@ public class FinanceRecordController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> deleteRecord(
             @PathVariable Long id) {
 
@@ -97,7 +97,7 @@ public class FinanceRecordController {
     }
 
     @PatchMapping("/{id}/restore")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> restoreRecord(
             @PathVariable Long id) {
 
