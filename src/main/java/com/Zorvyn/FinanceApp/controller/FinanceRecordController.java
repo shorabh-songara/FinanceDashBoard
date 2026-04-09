@@ -37,7 +37,7 @@ public class FinanceRecordController {
     private FinanceRecordService financeRecordService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<RecordResponse> createRecord(@RequestBody RecordRequest request, Principal principal) {
         // get logged-in user email from JWT
         String email = principal.getName();
@@ -46,35 +46,24 @@ public class FinanceRecordController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'ANALYST', 'VIEWER')")
-    public ResponseEntity<?> getAllRecords(
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALYST')")
+    public ResponseEntity<List<RecordResponse>> getAllRecords(
             @RequestParam(required = false) String categoryName,
             @RequestParam(required = false) CategoryType type,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
-            @RequestParam(required = false) Integer limit,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size) {
+            @RequestParam(required = false) Integer limit) {
 
-        logger.info("Get all records request - category: {}, type: {}, from: {}, to: {}, limit: {}, page: {}, size: {}",
-                categoryName, type, from, to, limit, page, size);
+        logger.info("Get all records request - category: {}, type: {}, from: {}, to: {}, limit: {}",
+                categoryName, type, from, to, limit);
 
-        // if page or size is provided, return paginated response
-        if (page != null || size != null) {
-            int pageNum = (page != null && page >= 0) ? page : 0;
-            int pageSize = (size != null && size > 0) ? size : 10;
-            return ResponseEntity.ok(financeRecordService.getAllRecords(
-                    categoryName, type, from, to, pageNum, pageSize));
-        }
-
-        // otherwise, return full list (backward compatible)
         List<RecordResponse> response = financeRecordService.getAllRecords(
                 categoryName, type, from, to, limit);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<RecordResponse> updateRecord(
             @PathVariable Long id,
             @RequestBody RecordRequest request) {
@@ -86,7 +75,7 @@ public class FinanceRecordController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','ANALYST')")
     public ResponseEntity<ApiResponse> deleteRecord(
             @PathVariable Long id) {
 
@@ -97,7 +86,7 @@ public class FinanceRecordController {
     }
 
     @PatchMapping("/{id}/restore")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<ApiResponse> restoreRecord(
             @PathVariable Long id) {
 

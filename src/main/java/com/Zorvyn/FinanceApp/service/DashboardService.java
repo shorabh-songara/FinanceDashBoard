@@ -6,6 +6,7 @@ import com.Zorvyn.FinanceApp.dto.response.CategoryTotalResponse;
 import com.Zorvyn.FinanceApp.dto.response.DashboardSummaryResponse;
 import com.Zorvyn.FinanceApp.dto.response.MonthlyTrendResponse;
 import com.Zorvyn.FinanceApp.dto.response.RecordResponse;
+import com.Zorvyn.FinanceApp.dto.response.WeeklyTrendResponse;
 
 public interface DashboardService {
     DashboardSummaryResponse getSummary();
@@ -15,4 +16,6 @@ public interface DashboardService {
     List<RecordResponse> getRecentActivity(Integer limit);
 
     List<MonthlyTrendResponse> getMonthlyTrends(Integer year);
+
+    List<WeeklyTrendResponse> getWeeklyTrends(Integer year, Integer month);
 }

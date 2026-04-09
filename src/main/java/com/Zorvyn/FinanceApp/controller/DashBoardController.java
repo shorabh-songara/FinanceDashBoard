@@ -16,6 +16,7 @@ import com.Zorvyn.FinanceApp.dto.response.CategoryTotalResponse;
 import com.Zorvyn.FinanceApp.dto.response.DashboardSummaryResponse;
 import com.Zorvyn.FinanceApp.dto.response.MonthlyTrendResponse;
 import com.Zorvyn.FinanceApp.dto.response.RecordResponse;
+import com.Zorvyn.FinanceApp.dto.response.WeeklyTrendResponse;
 import com.Zorvyn.FinanceApp.service.DashboardService;
 
 @RestController
@@ -50,6 +51,16 @@ public class DashBoardController {
             @RequestParam(required = false) Integer year) {
         logger.info("GET /api/dashboard/monthlyTrend - Fetching monthly trends for year: {}", year);
         List<MonthlyTrendResponse> response = dashboardService.getMonthlyTrends(year);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/weeklyTrend")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALYST')")
+    public ResponseEntity<List<WeeklyTrendResponse>> getWeeklyTrend(
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month) {
+        logger.info("GET /api/dashboard/weeklyTrend - Fetching weekly trends for year: {}, month: {}", year, month);
+        List<WeeklyTrendResponse> response = dashboardService.getWeeklyTrends(year, month);
         return ResponseEntity.ok(response);
     }
 

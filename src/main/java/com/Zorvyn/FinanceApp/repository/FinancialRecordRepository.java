@@ -81,6 +81,19 @@ public interface FinancialRecordRepository extends JpaRepository<Records, Long> 
                      "ORDER BY MONTH(r.date) ASC")
        List<Object[]> findMonthlyTrends(@Param("year") int year);
 
+       @Query("SELECT WEEK(r.date), " +
+                     "COALESCE(SUM(CASE WHEN c.type = 'INCOME' THEN r.amount ELSE 0 END), 0), " +
+                     "COALESCE(SUM(CASE WHEN c.type = 'EXPENCE' THEN r.amount ELSE 0 END), 0), " +
+                     "MIN(r.date), MAX(r.date) " +
+                     "FROM Records r " +
+                     "JOIN r.category c " +
+                     "WHERE r.isDeleted = false " +
+                     "AND YEAR(r.date) = :year " +
+                     "AND MONTH(r.date) = :month " +
+                     "GROUP BY WEEK(r.date) " +
+                     "ORDER BY WEEK(r.date) ASC")
+       List<Object[]> findWeeklyTrend(@Param("year") int year, @Param("month") int month);
+
        @Query("SELECT r FROM Records r " +
                      "WHERE r.isDeleted = false " +
                      "ORDER BY r.date DESC")

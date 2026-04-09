@@ -16,8 +16,10 @@ import com.Zorvyn.FinanceApp.dto.response.CategoryTotalResponse;
 import com.Zorvyn.FinanceApp.dto.response.DashboardSummaryResponse;
 import com.Zorvyn.FinanceApp.dto.response.MonthlyTrendResponse;
 import com.Zorvyn.FinanceApp.dto.response.RecordResponse;
+import com.Zorvyn.FinanceApp.dto.response.WeeklyTrendResponse;
 import com.Zorvyn.FinanceApp.entity.Records;
 import com.Zorvyn.FinanceApp.enums.CategoryType;
+import com.Zorvyn.FinanceApp.exception.IllegalArgumentException;
 import com.Zorvyn.FinanceApp.repository.FinancialRecordRepository;
 import com.Zorvyn.FinanceApp.service.DashboardService;
 
@@ -164,6 +166,66 @@ public class DashboardServiceImpl implements DashboardService {
 
         } catch (Exception e) {
             logger.error("Unexpected error fetching monthly trends: {}", e.getMessage());
+            throw new RuntimeException("Something went wrong. Please try again.");
+        }
+    }
+
+    @Override
+    public List<WeeklyTrendResponse> getWeeklyTrends(Integer year, Integer month) {
+        try {
+            int targetYear = (year != null) ? year : LocalDate.now().getYear();
+            int targetMonth = (month != null) ? month : LocalDate.now().getMonthValue();
+
+            if (targetMonth < 1 || targetMonth > 12) {
+                throw new IllegalArgumentException("Month must be between 1 and 12");
+            }
+
+            if (targetYear > LocalDate.now().getYear()) {
+                throw new IllegalArgumentException("Year must not be in the future");
+            }
+
+            logger.info("Fetching weekly trends for year: {}, month: {}", targetYear, targetMonth);
+
+            List<Object[]> results = financialRecordRepository.findWeeklyTrend(targetYear, targetMonth);
+
+            if (results.isEmpty()) {
+                logger.info("No weekly trends found for year: {}, month: {}", targetYear, targetMonth);
+                return List.of();
+            }
+
+            List<WeeklyTrendResponse> response = new ArrayList<>();
+
+            for (Object[] row : results) {
+                int weekNumber = ((Number) row[0]).intValue();
+                BigDecimal income = (BigDecimal) row[1];
+                BigDecimal expenses = (BigDecimal) row[2];
+                LocalDate weekStart = (LocalDate) row[3];
+                LocalDate weekEnd = (LocalDate) row[4];
+
+                if (income == null)
+                    income = BigDecimal.ZERO;
+                if (expenses == null)
+                    expenses = BigDecimal.ZERO;
+
+                BigDecimal netBalance = income.subtract(expenses);
+
+                response.add(new WeeklyTrendResponse(
+                        weekNumber,
+                        weekStart,
+                        weekEnd,
+                        income,
+                        expenses,
+                        netBalance));
+            }
+
+            logger.info("Found trends for {} weeks", response.size());
+            return response;
+
+        } catch (IllegalArgumentException e) {
+            logger.warn("Invalid parameter for weekly trends: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("Unexpected error fetching weekly trends: {}", e.getMessage());
             throw new RuntimeException("Something went wrong. Please try again.");
         }
     }
