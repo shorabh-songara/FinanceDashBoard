@@ -179,17 +179,21 @@ The server starts on **http://localhost:8080**.
 
 Since registration creates users with `VIEWER` role and `INACTIVE` status, the first admin must be seeded manually in MySQL:
 
+Only for testing
+Email: admin@zorvyn.com
+Password: 123456
+
 ```sql
 -- Generate a BCrypt hash for your password first (use an online tool or Spring's PasswordEncoder)
 INSERT INTO users (name, email, password, role, status, created_at, updated_at)
 VALUES (
-  'Admin',
-  'admin@zorvyn.com',
-  '$2a$10$YOUR_BCRYPT_HASH_HERE',
-  'ADMIN',
-  'ACTIVE',
-  NOW(),
-  NOW()
+'Admin',
+'admin@zorvyn.com',
+'$2a$10$Oh8qW0wUitBqnpz5wUhxXugbzbmshQhs4IHOLoei4OdmWRc8lj5Fy',
+'ADMIN',
+'ACTIVE',
+NOW(),
+NOW()
 );
 ```
 
