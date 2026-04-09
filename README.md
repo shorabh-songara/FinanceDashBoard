@@ -44,7 +44,7 @@ graph TB
 
     Client -->|HTTP Request| JwtFilter
     JwtFilter -->|Validate Token| Security
-    Security -->|@PreAuthorize| Controllers
+    Security -->|PreAuthorize| Controllers
     Controllers --> Services
     Services --> Repos
     Repos -->|JPA / Hibernate| DB
